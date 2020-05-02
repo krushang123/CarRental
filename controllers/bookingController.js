@@ -70,7 +70,7 @@ exports.store = async(req, res, next) => {
 
 
         booking = await booking.save()
-        car.isBooked = true;
+        car.bookings.push(booking);
         await car.save();
         res.send(booking);
         

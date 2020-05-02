@@ -3,7 +3,7 @@ const validationHandler = require("../validations/validaionHandler");
 
 exports.index = async(req, res, next) => {
     try{
-        const cars = await Car.find();
+        const cars = await Car.find().populate("bookings");
         res.send(cars);
     }catch(err){
         next(err)
@@ -15,7 +15,7 @@ exports.show = async (req, res, next) => {
     try{
         const car = await Car.findOne({
             _id: req.params.id
-        });
+        }).populate("bookings");
 
         res.send(car);
     }catch(err){
@@ -48,7 +48,14 @@ exports.update = async(req, res, next) => {
     try{
         validationHandler(req);
 
-        let car = await Car.findById(req.params.id);
+
+        let car = await Car.findById(req.params.id).populate("bookings");
+        if(car.bookings.length > 0) {
+            const error = new Error("Booking already exists.");
+            error.statusCode = 422;
+            error.message = "Booking exists for the give car.";
+            throw error;
+        }
         car.vehicleNumber = req.body.vehicleNumber || car.vehicleNumber;
         car.model = req.body.model || car.model;
         car.city = req.body.city || car.city;
@@ -66,7 +73,13 @@ exports.update = async(req, res, next) => {
 
 exports.delete = async(req, res, next) => {
     try{
-        let car = await Car.findById(req.params.id);
+        let car = await Car.findById(req.params.id).populate("bookings");
+        if(car.bookings.length > 0) {
+            const error = new Error("Booking already exists.");
+            error.statusCode = 422;
+            error.message = "Booking exists for the give car.";
+            throw error;
+        }
         await car.delete();
 
         res.send({message: "success"});
