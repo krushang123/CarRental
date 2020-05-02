@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 
 const errorHandler = require("./middlewares/errorHandler");
 const carRoutes = require("./routes/car");
+const userRoutes = require("./routes/user");
 const app = express();
 
 app.use(cors());
@@ -18,6 +19,7 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/api/cars", carRoutes);
+app.use("/api/users", userRoutes);
 
 app.use(errorHandler);
 

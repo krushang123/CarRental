@@ -25,7 +25,7 @@ exports.show = async (req, res, next) => {
 
 exports.store = async(req, res, next) => {
     try{
-        console.log(req.body);
+    
         validationHandler(req);
 
         let car = new Car();

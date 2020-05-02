@@ -19,3 +19,12 @@ exports.hasSeatingCapacity = check("seatingCapacity")
 exports.hasRentPerDay = check("rentPerDay")
     .isCurrency({symbol: "Rs",require_symbol: false})
     .withMessage("Car rent per day is required");
+
+exports.hasName = check("name")
+    .isLength({min: 3})
+    .withMessage("Name is required. Min length 3 characters.");    
+
+
+exports.hasContactNumber = check("contactNumber")
+    .isMobilePhone()
+    .withMessage("Valid Contact number is required.");
