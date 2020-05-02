@@ -7,6 +7,8 @@ const mongoose = require("mongoose");
 const errorHandler = require("./middlewares/errorHandler");
 const carRoutes = require("./routes/car");
 const userRoutes = require("./routes/user");
+const bookingRoutes = require("./routes/booking");
+
 const app = express();
 
 app.use(cors());
@@ -20,6 +22,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/api/cars", carRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/bookings", bookingRoutes);
 
 app.use(errorHandler);
 

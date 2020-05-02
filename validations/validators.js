@@ -28,3 +28,25 @@ exports.hasName = check("name")
 exports.hasContactNumber = check("contactNumber")
     .isMobilePhone()
     .withMessage("Valid Contact number is required.");
+
+
+function isValidDate(value) {
+    var pattern = /^([0-9]{2})-([0-9]{2})-([0-9]{4})$/;
+    if (value === null|| value === "" || !pattern.test(value)) {
+        return false;
+    } else {
+        return true;
+    }
+  
+};
+  
+exports.hasValidIssueDate = check("issueDate")
+    .custom(isValidDate)
+    .withMessage("Valid issueDate is required");
+
+exports.hasValidReturnDate = check('returnDate')
+    .custom(isValidDate)
+    .withMessage("Valid returnDate is required.");
+
+exports.hasCar = check("carId").isLength({min: 1}).withMessage("Car Id is required.");
+exports.hasUser = check("userId").isLength({min:1}).withMessage("User id is required.");
