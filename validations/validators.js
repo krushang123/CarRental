@@ -48,5 +48,20 @@ exports.hasValidReturnDate = check('returnDate')
     .custom(isValidDate)
     .withMessage("Valid returnDate is required.");
 
-exports.hasCar = check("carId").isLength({min: 1}).withMessage("Car Id is required.");
-exports.hasUser = check("userId").isLength({min:1}).withMessage("User id is required.");
+exports.hasCar = check("carId")
+    .exists()
+    .withMessage("Car Id is required.");
+
+
+exports.hasUser = check("userId")
+    .exists()
+    .withMessage("User id is required.");
+
+
+exports.isEmail = check("email")
+    .isEmail()
+    .withMessage("Email field must contain a correct email.");
+
+exports.hasPassword = check("password")
+    .exists()
+    .withMessage("Password is required.");

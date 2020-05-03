@@ -5,7 +5,9 @@ const validationHandler = require("../validations/validaionHandler");
 
 exports.index = async(req, res, next) => {
     try{
-        const bookings = await Booking.find()
+        const bookings = await Booking.find({
+            user: req.user.id
+        })
         .populate("car")
         .populate("user");
         res.send(bookings);
@@ -18,7 +20,8 @@ exports.index = async(req, res, next) => {
 exports.show = async (req, res, next) => {
     try{
         const booking = await Booking.findOne({
-            _id: req.params.id
+            _id: req.params.id,
+            user: req.user.id
         })
         .populate("car")
         .populate("user");
@@ -38,9 +41,14 @@ exports.store = async(req, res, next) => {
         let car = await Car.findById({
             _id: req.body.carId
         });
-        let user = await User.findById({
-            _id: req.body.userId
-        });
+        
+        if (car === null) {
+            let error = new Error("Car does not exists.");
+            error.statusCode = 422;
+            error.message = "Cannot make bookings for car which does not exists";
+            throw error;
+    
+        }
 
         let existingBookings = await Booking.find({
             "car": req.body.carId,
@@ -56,21 +64,21 @@ exports.store = async(req, res, next) => {
         }).exec();
         
         if(existingBookings.length > 0) {
-            const error = new Error("Booking already exists.");
+            let error = new Error("Booking already exists.");
             error.statusCode = 422;
             error.message = "Booking exists for the car for given time interval. Try for diffrent time interval";
             throw error;
         }
-        //console.log(alreadyBooked);
+        
 
         booking.car = car;
-        booking.user = user;
+        booking.user = req.user;
         booking.issueDate = new Date(req.body.issueDate);
         booking.returnDate = new Date(req.body.returnDate);
 
 
-        booking = await booking.save()
-        car.bookings.push(booking);
+        booking = await booking.save();
+        car.bookings.push(booking.id);
         await car.save();
         res.send(booking);
         
@@ -79,33 +87,3 @@ exports.store = async(req, res, next) => {
         next(err);
     }
 };
-/*
-exports.update = async(req, res, next) => {
-    try{
-        validationHandler(req);
-
-        let booking = await Booking.findById(req.params.id);
-        
-    
-
-        booking = await booking.save();
-
-        res.send(booking);
-
-    } catch(err){
-        next(err);
-    }
-};
-
-exports.delete = async(req, res, next) => {
-    try{
-        let booking = await Booking.findById(req.params.id);
-        await booking.delete();
-
-        res.send({message: "success"});
-
-    }catch(err){
-        next(err);
-    }
-};
-*/
